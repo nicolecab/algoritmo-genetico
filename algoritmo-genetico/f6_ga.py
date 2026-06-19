@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
-"""Algoritmo genetico para maximizar a funcao F6 de Schaffer."""
-
 from __future__ import annotations
 
 import argparse
 import math
 import random
-from dataclasses import dataclass
 from typing import Iterable
+from dataclasses import dataclass
 
 
 BITS_PER_VARIABLE = 22
@@ -25,7 +23,6 @@ class Individual:
 
 
 def f6(x: float, y: float) -> float:
-    """Funcao F6 usada nos slides: maximo global F6(0, 0) = 1."""
     radius = math.sqrt((x * x) + (y * y))
     numerator = (math.sin(radius) ** 2) - 0.5
     denominator = (1.0 + (0.001 * ((x * x) + (y * y)))) ** 2
@@ -48,7 +45,6 @@ def decode_variable(bits: Iterable[int]) -> float:
 def decode_chromosome(chromosome: tuple[int, ...]) -> tuple[float, float]:
     if len(chromosome) != CHROMOSOME_BITS:
         raise ValueError(f"Chromossomo deve ter {CHROMOSOME_BITS} bits.")
-
     x_bits = chromosome[:BITS_PER_VARIABLE]
     y_bits = chromosome[BITS_PER_VARIABLE:]
     return decode_variable(x_bits), decode_variable(y_bits)
@@ -71,15 +67,12 @@ def roulette_selection(population: list[Individual], rng: random.Random) -> Indi
     total_fitness = sum(individual.fitness for individual in population)
     if total_fitness <= 0:
         return rng.choice(population)
-
     target = rng.uniform(0.0, total_fitness)
     accumulated = 0.0
-
     for individual in population:
         accumulated += individual.fitness
         if accumulated >= target:
             return individual
-
     return population[-1]
 
 
@@ -91,7 +84,6 @@ def crossover(
 ) -> tuple[tuple[int, ...], tuple[int, ...]]:
     if rng.random() > crossover_rate:
         return parent_a, parent_b
-
     cut = rng.randint(1, CHROMOSOME_BITS - 1)
     child_a = parent_a[:cut] + parent_b[cut:]
     child_b = parent_b[:cut] + parent_a[cut:]
@@ -114,10 +106,8 @@ def next_generation(
     elitism: bool,
 ) -> list[Individual]:
     new_population: list[Individual] = []
-
     if elitism:
         new_population.append(max(population, key=lambda individual: individual.fitness))
-
     while len(new_population) < len(population):
         parent_a = roulette_selection(population, rng)
         parent_b = roulette_selection(population, rng)
@@ -127,11 +117,9 @@ def next_generation(
             crossover_rate,
             rng,
         )
-
         new_population.append(evaluate(mutate(child_a, mutation_rate, rng)))
         if len(new_population) < len(population):
             new_population.append(evaluate(mutate(child_b, mutation_rate, rng)))
-
     return new_population
 
 
@@ -151,11 +139,9 @@ def run_ga(
         raise ValueError("A taxa de crossover deve estar entre 0 e 1.")
     if not 0 <= mutation_rate <= 1:
         raise ValueError("A taxa de mutacao deve estar entre 0 e 1.")
-
     rng = random.Random(seed)
     population = initial_population(population_size, rng)
     history = [max(population, key=lambda individual: individual.fitness)]
-
     for _ in range(generations):
         population = next_generation(
             population,
@@ -165,7 +151,6 @@ def run_ga(
             elitism=elitism,
         )
         history.append(max(population, key=lambda individual: individual.fitness))
-
     return max(history, key=lambda individual: individual.fitness), history
 
 
@@ -201,16 +186,15 @@ def main() -> None:
         seed=args.seed,
         elitism=not args.no_elitism,
     )
-
     if args.verbose:
         for generation, individual in enumerate(history):
             print(
                 f"geracao={generation:03d} "
                 f"fitness={individual.fitness:.8f} "
                 f"x={individual.x:.8f} "
-                f"y={individual.y:.8f}"
+                f"y={individual.y:.8f} "
+                f"cromossomo={chromosome_as_string(individual.chromosome)}"
             )
-
     print("Melhor solucao encontrada")
     print(f"F6(x, y): {best.fitness:.10f}")
     print(f"x: {best.x:.10f}")
