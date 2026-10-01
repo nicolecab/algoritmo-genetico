@@ -9,7 +9,7 @@ F6(x, y) = 0.5 - ((sin(sqrt(x² + y²))² - 0.5) / (1 + 0.001(x² + y²))²)
 
 A função possui máximo global em `F6(0, 0) = 1`.
 
-## Como funciona
+## Funcionamento
 
 Cada solução é representada por um cromossomo binário de 44 bits: 22 bits
 codificam `x` e 22 bits codificam `y`, ambos no intervalo `[-100, 100]`.
@@ -27,7 +27,6 @@ crossover de `0.65` e taxa de mutação de `0.008`.
 ## Requisitos
 
 - Python 3.10 ou superior
-- nenhuma dependência externa
 
 ## Execução
 
@@ -49,7 +48,7 @@ Use `--verbose` para exibir a melhor solução de cada geração:
 python3 f6_ga.py --seed 42 --verbose
 ```
 
-Os principais parâmetros também podem ser ajustados pela linha de comando:
+Os principais parâmetros podem ser ajustados pela linha de comando:
 
 ```bash
 python3 f6_ga.py \
